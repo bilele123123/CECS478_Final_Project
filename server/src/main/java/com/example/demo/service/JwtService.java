@@ -1,5 +1,8 @@
-package com.example.demo.auth;
+package com.example.demo.service;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
@@ -26,5 +29,12 @@ public class JwtService {
         } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class Jwt {
+        private String username;
     }
 }
