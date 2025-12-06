@@ -2,33 +2,40 @@ name: Java CI
 
 on:
   push:
+  # Run this workflow anytime code is pushed to these branches
     branches: [ main, server-implementation ]
   pull_request:
+  # Also run on pull requests targeting these branches
     branches: [ main, server-implementation ]
 
 jobs:
   build:
+  # Use the latest Ubuntu runner provided by GitHub
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout the repository so the workflow can access the files
       - name: Checkout code
         uses: actions/checkout@v3
 
+    # Step 2: Install Java JDK 17 using the Temurin distribution
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: temurin
 
+    # Step 3: Ensure the Maven wrapper script has execute permission
       - name: Make mvnw executable
         run: chmod +x ./server/mvnw
 
-
+    # Step 4: Build the application without running tests (faster)
       - name: Package application
         run: |
           cd server
           ./mvnw clean package -DskipTests
-
+          
+    # Step 5: Build and execute tests
       - name: Build & run tests
         run: |
           cd server
