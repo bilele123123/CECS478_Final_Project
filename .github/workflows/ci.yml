@@ -24,12 +24,17 @@ jobs:
         run: chmod +x ./server/mvnw
 
       - name: Build & run tests
-        run: ./server/mvnw clean test
+        run: |
+          cd server
+          ./mvnw clean test
 
       - name: Package application
-        run: ./server/mvnw clean package -DskipTests
+        run: |
+          cd server
+          ./mvnw clean package -DskipTests
 
       - name: Show test results
         run: |
+          cd server
           echo "Test summary:"
-          ./server/mvnw test surefire-report:report
+          ./mvnw test surefire-report:report
