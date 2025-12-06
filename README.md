@@ -96,6 +96,9 @@ Overall the system delivers a secure and functional real time chat pipeline. Mes
 - Complete evaluation analysis (Week 16)
 - Implement automated metrics visualization (charts/tables)
 - Add concurrent user stress tests to verify rate limiting under load
+
+A few improvements remain to move the system toward a more complete production-style design. The next steps focus on strengthening evaluation, improving observability with automated metric visualization, and testing concurrent user load to confirm that rate limiting and stability hold under real conditions.
+
 ----
 
 ## Runbook - How to Build, Rebuild and Run the Project
