@@ -1,0 +1,16 @@
+{
+  "name": "chat-demo",
+  "version": "1.0.0",
+  "description": "Automated WebSocket demo client",
+  "main": "scripts/sendMessage.js",
+  "type": "commonjs",
+  "scripts": {
+    "demo": "node scripts/sendMessage.js"
+  },
+  "dependencies": {
+    "@stomp/stompjs": "^7.2.1",
+    "node-fetch": "^2.7.0",
+    "sockjs-client": "^1.6.1",
+    "ws": "^8.18.3"
+  }
+}

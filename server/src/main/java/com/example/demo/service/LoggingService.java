@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.Instant;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +18,9 @@ public class LoggingService {
     private final List<String> inMemoryLogs = new ArrayList<>();
     private final AtomicInteger totalMessages = new AtomicInteger();
     private final Map<String, AtomicInteger> messagesPerUser = new ConcurrentHashMap<>();
-
-    private static final Path LOG_DIR = Paths.get("logs");
-    private static final Path LOG_FILE = LOG_DIR.resolve(Instant.now().toString().replaceAll(":", ".") + ".log");
+    private static final Path LOG_DIR = Paths.get("../evidence/logs");
+    private static final Path LOG_FILE =
+            LOG_DIR.resolve(Instant.now().toString().replaceAll(":", ".") + ".log");
 
     public LoggingService() {
         try {
@@ -29,24 +28,22 @@ public class LoggingService {
             if (!Files.exists(LOG_FILE)) {
                 Files.createFile(LOG_FILE);
             }
+
+            append("=== Server started at " + Instant.now() + " ===\n");
+
         } catch (IOException e) {
             throw new RuntimeException("Failed to initialize logging directory", e);
         }
     }
 
-    public synchronized void log(String msg) {
-        String line = "[" + Instant.now() + "] " + msg;
-        inMemoryLogs.add(line);
-        System.out.println(line);
-    }
-
-    private synchronized void writeToFile(String username) {
-        String line = "[" + Instant.now() + "] Message received from user: " + username + "\n";
-
+    /**
+     * Append a single line to the log file safely.
+     */
+    private synchronized void append(String line) {
         try {
             Files.write(
                     LOG_FILE,
-                    line.getBytes(),
+                    (line + System.lineSeparator()).getBytes(),
                     StandardOpenOption.APPEND
             );
         } catch (IOException e) {
@@ -54,13 +51,32 @@ public class LoggingService {
         }
     }
 
-    public void recordMessage(String username) {
+    /**
+     * Public log method used by controllers and services.
+     * Writes to memory + console + file.
+     */
+    public synchronized void log(String msg) {
+        String line = "[" + Instant.now() + "] " + msg;
+        inMemoryLogs.add(line);
+        System.out.println(line);
+
+        // Write ALL log events to file
+        append(line);
+    }
+
+    /**
+     * Called when a valid message is received.
+     * Updates metrics and logs to file.
+     */
+    public synchronized void recordMessage(String username) {
         totalMessages.incrementAndGet();
         messagesPerUser
                 .computeIfAbsent(username, u -> new AtomicInteger(0))
                 .incrementAndGet();
 
-        writeToFile(username);
+        String line = "[" + Instant.now() + "] Message received from user: " + username;
+        inMemoryLogs.add(line);
+        append(line);
     }
 
     public List<String> getLogs() {
