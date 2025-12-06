@@ -10,6 +10,7 @@
 
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
+        /* Chat message display area */
         #messages {
             border: 1px solid #ccc;
             padding: 10px;
@@ -25,14 +26,17 @@
 
 <h2>Realtime Chat</h2>
 
+<!-- Username input and connect button -->
 <input id="username" placeholder="Enter username" />
 <button onclick="connect()">Connect</button>
 
 <hr>
 
+<!-- Chat UI (hidden until user connects) -->
 <div id="chat" style="display:none;">
     <div id="messages"></div>
-
+    
+    <!-- Message input + send button -->
     <input id="messageInput" placeholder="Type a message..." />
     <button onclick="sendMessage()">Send</button>
 </div>
@@ -40,7 +44,13 @@
 <script>
     let stompClient = null;
     let jwtToken = null;
-
+    /**
+     * Connect the user to the STOMP WebSocket server.
+     * 1. User enters a username
+     * 2. The frontend fetches a JWT from /token
+     * 3. Opens a SockJS connection
+     * 4. Subscribes to /topic/messages to receive broadcast chat messages
+     */
     async function connect() {
         const username = document.getElementById("username").value.trim();
         if (!username) {
@@ -59,13 +69,16 @@
         stompClient = Stomp.over(socket);
         stompClient.debug = null; // Disable console spam
 
+        // Attempt to connect, passing the JWT as a header
         stompClient.connect(
             { "X-Auth-Token": jwtToken },
             () => {
                 console.log("Connected!");
 
+                // Show the chat interface
                 document.getElementById("chat").style.display = "block";
 
+                // Subscribe to backend message broadcasts
                 stompClient.subscribe("/topic/messages", msg => {
                     const payload = JSON.parse(msg.body);
                     appendMessage(payload.sender, payload.content);
@@ -76,7 +89,12 @@
             }
         );
     }
-
+    /**
+     * Send a message through STOMP to backend endpoint /app/send-message.
+     * Payload includes:
+     *  - content: text user typed
+     *  - timestamp: ISO time string
+     */
     function sendMessage() {
         if (!stompClient) return;
 
@@ -88,6 +106,7 @@
             timestamp: new Date().toISOString(),
         };
 
+        // Send message along with JWT header for authentication
         stompClient.send(
             "/app/send-message",
             { "X-Auth-Token": jwtToken },
@@ -96,7 +115,10 @@
 
         document.getElementById("messageInput").value = "";
     }
-
+    
+    /**
+     * Display a chat message inside the #messages container.
+     */
     function appendMessage(sender, content) {
         const container = document.getElementById("messages");
 
