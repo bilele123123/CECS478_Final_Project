@@ -32,6 +32,7 @@ class ChatControllerTest {
         when(tokenCache.isValid(TEST_JWT, TEST_USER)).thenReturn(true);
     }
 
+    // --- Happy Path 1 ---
     @Test
     void happyPathMessage() {
         ChatMessage msg = new ChatMessage();
@@ -42,14 +43,28 @@ class ChatControllerTest {
         assertEquals(TEST_USER, result.getSender());
         assertEquals("Hello, world!", result.getContent());
 
-        // Verify loggingService called
         verify(loggingService, times(1)).recordMessage(TEST_USER);
     }
 
+    // --- Happy Path 2: shorter message ---
+    @Test
+    void happyPathShortMessage() {
+        ChatMessage msg = new ChatMessage();
+        msg.setContent("Hi!");
+
+        ChatMessage result = chatController.handle(msg, TEST_JWT);
+
+        assertEquals(TEST_USER, result.getSender());
+        assertEquals("Hi!", result.getContent());
+
+        verify(loggingService, times(1)).recordMessage(TEST_USER);
+    }
+
+    // --- Negative 1: empty message ---
     @Test
     void negativeEmptyMessage() {
         ChatMessage msg = new ChatMessage();
-        msg.setContent(""); // empty
+        msg.setContent("");
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
@@ -58,6 +73,22 @@ class ChatControllerTest {
 
         assertEquals("Message cannot be empty.", ex.getMessage());
 
-        verify(loggingService, never());
+        verify(loggingService, never()).recordMessage(TEST_USER);
+    }
+
+    // --- Negative 2: oversized message ---
+    @Test
+    void negativeOversizedMessage() {
+        ChatMessage msg = new ChatMessage();
+        msg.setContent("A".repeat(201)); // longer than 200 chars
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> chatController.handle(msg, TEST_JWT)
+        );
+
+        assertEquals("Message too long.", ex.getMessage());
+
+        verify(loggingService, never()).recordMessage(TEST_USER);
     }
 }

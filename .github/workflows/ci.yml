@@ -23,18 +23,13 @@ jobs:
       - name: Make mvnw executable
         run: chmod +x ./server/mvnw
 
-      - name: Build & run tests
-        run: |
-          cd server
-          ./mvnw clean test
 
       - name: Package application
         run: |
           cd server
           ./mvnw clean package -DskipTests
 
-      - name: Show test results
+      - name: Build & run tests
         run: |
           cd server
-          echo "Test summary:"
-          ./mvnw test surefire-report:report
+          ./mvnw clean test
