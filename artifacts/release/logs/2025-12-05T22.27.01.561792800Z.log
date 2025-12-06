@@ -1,0 +1,12 @@
+=== Server started at 2025-12-05T22:27:01.564792100Z ===
+
+[2025-12-05T22:31:53.351312Z] Generated JWT for: asd
+[2025-12-05T22:31:54.665606200Z] Message received from user: asd
+[2025-12-05T22:36:46.039354200Z] Generated JWT for: user1
+[2025-12-05T22:36:47.292861700Z] Message received from user: user1
+[2025-12-05T22:36:48.078565800Z] Message received from user: user1
+[2025-12-05T22:36:48.810760200Z] Message received from user: user1
+[2025-12-05T22:36:53.095540300Z] Generated JWT for: user2
+[2025-12-05T22:36:54.316943800Z] Message received from user: user2
+[2025-12-05T22:36:54.917246Z] Message received from user: user2
+[2025-12-05T22:36:55.647296Z] Message received from user: user2
