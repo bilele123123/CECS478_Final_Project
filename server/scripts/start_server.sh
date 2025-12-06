@@ -1,1 +1,0 @@
-cd ../ && ./mvnw.cmd spring-boot:run

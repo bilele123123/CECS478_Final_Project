@@ -1,87 +1,53 @@
 # Makefile for Security-Focused WebSocket Service
-# CECS 478 Final Project - "Simple Web Service to Hardened Service"
+# CECS478 Final Project - "Simple Web Service to Hardened Service"
 # Authors: Thai Le & Brian Ho
 
 PROJECT_NAME = Final_Project_Proposal
-SERVER_DIR = server
-JAR = $(SERVER_DIR)/target/final-0.0.1-SNAPSHOT.jar
-DC = docker compose
+DOCKER_COMPOSE = docker-compose
 
+# Default target
 .DEFAULT_GOAL := help
 
-.PHONY: help up-windows demo-windows up-linux demo-linux build-windows build-linux clean
+## bootstrap: Set up the environment, build images, and start the containers
+bootstrap:
+	@echo "Bootstrapping $(PROJECT_NAME)..."
+	$(DOCKER_COMPOSE) build
+	$(DOCKER_COMPOSE) up -d
+	@echo "Containers are up and running."
 
-help:
-	@echo "Usage:"
-	@echo "  make up-windows && make demo-windows"
-	@echo "  make up-linux   && make demo-linux"
-	@echo ""
-	@echo "Targets:"
-	@echo "  up-windows/demo-windows  - Build & launch + demo on Windows"
-	@echo "  up-linux/demo-linux      - Build & launch + demo on Unix/Linux"
-	@echo "  clean                    - Stop containers & remove artifacts"
+## up: Start existing containers (if already built)
+up:
+	$(DOCKER_COMPOSE) up -d
 
-# -----------------------
-# --- WINDOWS TARGETS ---
-# -----------------------
-up-windows: build-windows
-	@echo ""
-	@echo "Starting Docker services (Windows)..."
-	$(DC) up -d --build chat-server pcap-capture
-	@echo "Waiting for chat-server TLS initialization (10s)..."
-	@powershell -Command "Start-Sleep -Seconds 10"
-	@echo "Services are running."
+## down: Stop all running containers
+down:
+	$(DOCKER_COMPOSE) down
 
-build-windows:
-	@echo "Building Spring Boot server (Windows)..."
-	$(SERVER_DIR)\mvnw.cmd -f $(SERVER_DIR)\pom.xml clean package -DskipTests
-	@echo "Build complete."
+## logs: View logs from all services
+logs:
+	$(DOCKER_COMPOSE) logs -f
 
-demo-windows:
-	@echo "Running demo-runner container (Windows)..."
-	$(DC) run --rm --service-ports demo-runner
-	@echo "Waiting for logs to flush..."
-	@powershell -Command "Start-Sleep -Seconds 3"
-	@echo "Stopping pcap-capture..."
-	$(DC) stop pcap-capture || true
-	@echo "Exporting metrics..."
-	@curl -sk https://localhost:8443/metrics/all -o evidence/metrics/metrics.json || true
-	@echo "Demo complete."
+## ps: List running containers
+ps:
+	$(DOCKER_COMPOSE) ps
 
-# -----------------------
-# --- LINUX/UNIX TARGETS ---
-# -----------------------
-up-linux: build-linux
-	@echo ""
-	@echo "Starting Docker services (Linux)..."
-	$(DC) up -d --build chat-server pcap-capture
-	@echo "Waiting for chat-server TLS initialization (10s)..."
-	@sleep 10
-	@echo "Services are running."
+## rebuild: Force rebuild images without cache
+rebuild:
+	$(DOCKER_COMPOSE) build --no-cache
+	$(DOCKER_COMPOSE) up -d
 
-build-linux:
-	@echo "Building Spring Boot server (Linux)..."
-	./$(SERVER_DIR)/mvnw -f $(SERVER_DIR)/pom.xml clean package -DskipTests
-	@echo "Build complete."
-
-demo-linux:
-	@echo "Running demo-runner container (Linux)..."
-	$(DC) run --rm --service-ports demo-runner
-	@echo "Waiting for logs to flush..."
-	@sleep 3
-	@echo "Stopping pcap-capture..."
-	$(DC) stop pcap-capture || true
-	@echo "Exporting metrics..."
-	@curl -sk https://localhost:8443/metrics/all -o evidence/metrics/metrics.json || true
-	@echo "Demo complete."
-
-# -----------------------
-# --- CLEANUP (CROSS-PLATFORM)
-# -----------------------
+## clean: Stop containers and remove all images/volumes
 clean:
-	@echo "Stopping and removing containers..."
-	$(DC) down -v || true
-	@echo "Removing build artifacts..."
-	rm -rf $(SERVER_DIR)/target
-	rm -f $(SERVER_DIR)/demo-keystore.p12
-	@echo "Cleanup complete."
+	$(DOCKER_COMPOSE) down --rmi all --volumes --remove-orphans
+	@echo "Cleaned up containers, images, and volumes."
+
+## pcap: Capture Docker network traffic for analysis (controlled use only)
+pcap:
+	@echo "Capturing traffic for internal analysis..."
+	sudo docker exec -it $$(docker ps -qf "name=$(PROJECT_NAME)_server") \
+		tcpdump -i eth0 -w /tmp/ws_traffic.pcap
+
+## help: Show available commands
+help:
+	@echo "Available make commands:"
+	@grep -E '^##' Makefile | sed -e 's/## //'
