@@ -96,7 +96,36 @@ Overall the system delivers a secure and functional real time chat pipeline. Mes
 - Complete evaluation analysis (Week 16)
 - Implement automated metrics visualization (charts/tables)
 - Add concurrent user stress tests to verify rate limiting under load
+----
 
+## Runbook - How to Build, Rebuild and Run the Project
+
+### Local Run (No Docker)
+- Build project  
+  ./mvnw install
+- Start server  
+  ./mvnw spring-boot:run
+
+### Docker Run
+- Windows:  
+  make up-windows
+- Linux / Mac:  
+  make up-linux
+
+### Rebuild (Docker)
+- Rebuild all containers and server  
+  make rebuild
+
+### Demo Client (Optional)
+- Windows:  
+  make demo-windows
+- Linux / Mac:  
+  make demo-linux
+
+### Stop and Clean
+- Remove containers and artifacts  
+  make clean
+  
 ----
 ## Final Project Proposal
 ### 1. Problem Statement:
