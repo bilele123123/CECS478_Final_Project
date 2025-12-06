@@ -1,0 +1,22 @@
+=== Server started at 2025-12-05T22:04:46.366387400Z ===
+
+[2025-12-05T22:04:56.172430600Z] Generated JWT for: test_user1
+[2025-12-05T22:04:59.413775400Z] Message received from user: test_user1
+[2025-12-05T22:05:03.050905500Z] Rejected oversized message from test_user1
+[2025-12-05T22:05:15.110442800Z] Message received from user: test_user1
+[2025-12-05T22:05:21.220789700Z] Generated JWT for: test_user2
+[2025-12-05T22:05:26.578672300Z] Message received from user: test_user2
+[2025-12-05T22:05:29.467612900Z] Message received from user: test_user2
+[2025-12-05T22:07:42.323501300Z] Message received from user: test_user2
+[2025-12-05T22:07:42.861825100Z] Message received from user: test_user2
+[2025-12-05T22:07:43.549621700Z] Message received from user: test_user2
+[2025-12-05T22:07:44.241777200Z] Message received from user: test_user2
+[2025-12-05T22:07:44.917047800Z] Message received from user: test_user2
+[2025-12-05T22:07:45.494117500Z] Message received from user: test_user2
+[2025-12-05T22:07:46.815537Z] Message received from user: test_user2
+[2025-12-05T22:07:47.370571400Z] Message received from user: test_user2
+[2025-12-05T22:07:47.954221300Z] Message received from user: test_user2
+[2025-12-05T22:07:48.577097900Z] Message received from user: test_user2
+[2025-12-05T22:07:49.506700600Z] Message received from user: test_user2
+[2025-12-05T22:07:50.131983Z] Message received from user: test_user2
+[2025-12-05T22:07:50.701409600Z] Message received from user: test_user2
