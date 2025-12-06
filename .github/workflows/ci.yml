@@ -20,13 +20,16 @@ jobs:
           java-version: 17
           distribution: temurin
 
+      - name: Make mvnw executable
+        run: chmod +x ./server/mvnw
+
       - name: Build & run tests
-        run: ./mvnw clean test
+        run: ./server/mvnw clean test
 
       - name: Package application
-        run: ./mvnw clean package -DskipTests
+        run: ./server/mvnw clean package -DskipTests
 
       - name: Show test results
         run: |
           echo "Test summary:"
-          ./mvnw test surefire-report:report
+          ./server/mvnw test surefire-report:report
