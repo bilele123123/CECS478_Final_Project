@@ -21,13 +21,15 @@ class ChatControllerTest {
 
     @BeforeEach
     void setUp() {
+        // Create mocks for dependent services
         JwtService jwtService = mock(JwtService.class);
         TokenCache tokenCache = mock(TokenCache.class);
         loggingService = mock(LoggingService.class);
 
+        // Inject mocks into controller
         chatController = new ChatController(jwtService, tokenCache, loggingService);
 
-        // Mocks
+        // Mocks behavior
         when(jwtService.extractUsername(TEST_JWT)).thenReturn(TEST_USER);
         when(tokenCache.isValid(TEST_JWT, TEST_USER)).thenReturn(true);
     }
@@ -38,11 +40,14 @@ class ChatControllerTest {
         ChatMessage msg = new ChatMessage();
         msg.setContent("Hello, world!");
 
+        // Call controller method
         ChatMessage result = chatController.handle(msg, TEST_JWT);
 
+        // Assert correct sender and content
         assertEquals(TEST_USER, result.getSender());
         assertEquals("Hello, world!", result.getContent());
 
+        // Verify logging was recorded
         verify(loggingService, times(1)).recordMessage(TEST_USER);
     }
 
@@ -66,6 +71,7 @@ class ChatControllerTest {
         ChatMessage msg = new ChatMessage();
         msg.setContent("");
 
+        // Expect an exception for empty content
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> chatController.handle(msg, TEST_JWT)
@@ -81,7 +87,8 @@ class ChatControllerTest {
     void negativeOversizedMessage() {
         ChatMessage msg = new ChatMessage();
         msg.setContent("A".repeat(201)); // longer than 200 chars
-
+        
+        // Expect exception for long messages
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> chatController.handle(msg, TEST_JWT)
