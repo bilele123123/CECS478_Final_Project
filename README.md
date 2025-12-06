@@ -1,5 +1,5 @@
+[![Java CI](https://github.com/bilele123123/CECS478_Final_Project/actions/workflows/ci.yml/badge.svg)](https://github.com/bilele123123/CECS478_Final_Project/actions/workflows/ci.yml)
 # Final Project Proposal
-
 ### 1. Problem Statement:
 Modern messaging applications rely heavily on persistent bidirectional communication which makes WebSockets a common choice for real-time exchange of information. However many small or student-built messaging tools implement WebSockets without adequate security controls which leaves them vulnerable to attackers. This project aims to design and implement a security-focused messaging service using WebSockets with the primary goal of demonstrating secure communication patterns in a simple reproducible environment. The system will highlight secure session safe message handling input validation and traffic inspection practices relevant to defensive security engineering.
 
