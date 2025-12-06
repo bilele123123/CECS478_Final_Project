@@ -49,6 +49,8 @@
 | Testing                    | 4 unit tests (2 happy-path, 2 negative) passing               |
 | CI pipeline                | Builds, runs tests, coverage summary produced                 |
 
+Overall the system delivers a secure and functional real time chat pipeline. Messages move correctly through token validation rate limiting logging and WebSocket broadcasting with consistent results. The supporting components including Docker setup PCAP capture the demo client and the CI pipeline all operate as expected. Unit tests confirm proper handling of both valid and invalid messages which shows that the core features work reliably.
+
 ## 3. What Doesn’t Work / Known Issues
 
 | Issue                     | Notes / Workaround                                                      |
